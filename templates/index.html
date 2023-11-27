@@ -3,17 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/login.css')}}">
 </head>
 <body>
-<form action="/login" method="get">
-    <label for="email">email</label>
-    <input id="email" type="email" name="email"/>
-    <br>
-    <label for="passwd">password</label>
-    <input id="passwd" type="password" name="password"/>
-    <br>
-    <button type="submit">提交</button>
-</form>
+<div class="login-box">
+  <h2>Login</h2>
+  <form action="/login" method="get">
+    <div class="user-box">
+      <input type="text" name="email" required="">
+      <label>email</label>
+    </div>
+    <div class="user-box">
+      <input type="password" name="password" required="">
+      <label>Password</label>
+    </div>
+    <a href="#">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      Submit
+    </a>
+  </form>
+</div>
 
 </body>
 </html>
+
