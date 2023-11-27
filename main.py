@@ -57,7 +57,7 @@ def refresh():
     return "刷新成功"
   except Exception as e:
     print(e)
-    return "刷新失败"
+    return "刷新失败 "
 
 @app.route('/chat')
 def chat():
