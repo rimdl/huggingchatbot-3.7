@@ -45,6 +45,20 @@ def login():
     print(cookies)
     return "登录失败，重新登录试试 --> "+str(info)
 
+@app.route("/refresh")
+def refresh():
+  try:
+    email = ""
+    with open(userinfo_path, 'r') as file:
+      email = file.read()
+    sign = Login(email, None)
+    cookies = sign.loadCookiesFromDir(cookie_path_dir)
+    chatbot = hugchat.ChatBot(cookies=cookies.get_dict())
+    return "刷新成功"
+  except Exception as e:
+    print(e)
+    return "刷新失败"
+
 @app.route('/chat')
 def chat():
   message = request.args.get("message")
