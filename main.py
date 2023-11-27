@@ -49,8 +49,8 @@ def login():
 def chat():
   message = request.args.get("message")
   query_result = chatbot.query(message)
-  print(query_result)
-  return "success"
+  print(chatbot.active_model)
+  return str(query_result)
 
 @app.route('/chatstream')
 def chatstream():
@@ -60,25 +60,51 @@ def chatstream():
           stream=True
   ):
     print(resp)
-  return "success"
+  return "stream流"
 
-@app.route('/menu')
-def menu():
-  option = request.args.get("option")
-  print(option)
-  if option == "/newchat":
-    id = chatbot.new_conversation()
-    chatbot.change_conversation(id)
-  elif option == "/list":
-    conversation_list = chatbot.get_conversation_list()
-    print(conversation_list)
-  elif option == "/models":
-    models = chatbot.get_available_llm_models()
-    print(models[0])
-  elif option == "/alllist":
-    conversations = chatbot.get_remote_conversations(replace_conversation_list=True)
-    print(conversations)
-  return "success"
+@app.route('/help')
+def help():
+  cmds = "/change?num=xx：切换模型，/newchat:开启新会话，/list：获取对话列表，/models：获取可用的模型列表，/alllist：从服务器获取所有回话列表"
+  return cmds
 
+@app.route("/newchat")
+def newchat():
+  id = chatbot.new_conversation()
+  chatbot.change_conversation(id)
+  return "新会话开启"
+
+@app.route("/list")
+def list():
+  conversation_list = chatbot.get_conversation_list()
+  return str(conversation_list)
+
+@app.route("/models")
+def models():
+  models = chatbot.get_available_llm_models()
+  models_str = ""
+  for model in models:
+    models_str += ("[" + str(model) + "] ")
+  return models_str
+
+@app.route("/alllist")
+def alllist():
+  conversations = chatbot.get_remote_conversations(replace_conversation_list=True)
+  conversations_str = ""
+  for conversation in conversations:
+    conversations_str += ("[" + str(conversation) + "] ")
+  return conversations_str
+
+@app.route("/change")
+def change():
+  id = chatbot.new_conversation()
+  chatbot.change_conversation(id)
+  num = request.args.get("num")
+  chatbot.switch_llm(int(num)-1)
+  return "切换成功"
+
+@app.route("/test")
+def test():
+  print(chatbot.active_model)
+  return "test"
 
 app.run(host='0.0.0.0', port=81)
