@@ -6,16 +6,19 @@ app = Flask(__name__)
 cookie_path_dir = "./cookies_snapshot"
 userinfo_path = "./userinfo_path"
 
-global chatbot
-try:
-  email = ""
-  with open(userinfo_path,'r') as file:
-    email = file.read()
-  sign = Login(email, None)
-  cookies = sign.loadCookiesFromDir(cookie_path_dir)
-  chatbot = hugchat.ChatBot(cookies=cookies.get_dict())
-except Exception as e:
-  print(e)
+chatbot = None
+
+def getbot():
+  try:
+    email = ""
+    with open(userinfo_path, 'r') as file:
+      email = file.read()
+    sign = Login(email, None)
+    cookies = sign.loadCookiesFromDir(cookie_path_dir)
+    global chatbot
+    chatbot = hugchat.ChatBot(cookies=cookies.get_dict())
+  except Exception as e:
+    print(e)
 
 @app.route('/')
 def index():
@@ -53,6 +56,7 @@ def refresh():
       email = file.read()
     sign = Login(email, None)
     cookies = sign.loadCookiesFromDir(cookie_path_dir)
+    global chatbot
     chatbot = hugchat.ChatBot(cookies=cookies.get_dict())
     return "刷新成功"
   except Exception as e:
@@ -121,4 +125,5 @@ def test():
   print(chatbot.active_model)
   return "test"
 
+getbot()
 app.run(host='0.0.0.0', port=81)
