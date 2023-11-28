@@ -38,6 +38,7 @@ def login():
     sign.saveCookiesToDir(cookie_path_dir)
     with open(userinfo_path,'w') as file:
       file.write(email)
+    getbot()
   except Exception as e:
     info = e
     print(e)
@@ -94,31 +95,65 @@ def newchat():
 @app.route("/list")
 def list():
   conversation_list = chatbot.get_conversation_list()
-  return str(conversation_list)
+  conversation_str = ""
+  index = 1
+  for item in conversation_list:
+    conversation_str += (str(index) + "[" + str(item) + "] \n")
+    print(item)
+    index = index + 1
+  return conversation_str
 
 @app.route("/models")
 def models():
   models = chatbot.get_available_llm_models()
   models_str = ""
+  index = 1
   for model in models:
-    models_str += ("[" + str(model) + "] ")
+    models_str += (str(index)+"[" + str(model) + "] \n")
+    index=index+1
   return models_str
 
 @app.route("/alllist")
 def alllist():
   conversations = chatbot.get_remote_conversations(replace_conversation_list=True)
   conversations_str = ""
+  index = 1
   for conversation in conversations:
-    conversations_str += ("[" + str(conversation) + "] ")
+    conversations_str += (str(index)+"[" + str(conversation.title) + "] \n")
+    index = index+1
   return conversations_str
 
 @app.route("/change")
 def change():
-  # id = chatbot.new_conversation()
-  # chatbot.change_conversation(id)
+  id = chatbot.new_conversation()
+  chatbot.change_conversation(id)
   num = request.args.get("num")
   chatbot.switch_llm(int(num)-1)
   return "切换成功"
+
+@app.route("/getmodel")
+def getmodel():
+  return str(chatbot.active_model)
+
+@app.route("/getconfig")
+def getconfig():
+  useremail = ""
+  cookieinfo = ""
+  with open(userinfo_path,'r') as file1:
+    useremail = file1.read()
+  with open(cookie_path_dir+"/"+useremail+".json",'r') as file:
+    cookieinfo = file.read()
+  msg = "useremail:"+useremail+"\ncookie:"+cookieinfo
+  return msg
+
+@app.route("/chatweb")
+def chatweb():
+  query_result = chatbot.query("嘌呤含量较高的食物", web_search=True)
+  print(query_result)  # or query_result.text or query_result["text"]
+  for source in query_result.web_search_sources:
+    print(source.link)
+    print(source.title)
+    print(source.hostname)
 
 @app.route("/test")
 def test():
