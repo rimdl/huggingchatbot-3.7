@@ -6,7 +6,7 @@ app = Flask(__name__)
 cookie_path_dir = "./cookies_snapshot"
 userinfo_path = "./userinfo_path"
 
-chatbot = None
+global chatbot
 try:
   email = ""
   with open(userinfo_path,'r') as file:
@@ -110,8 +110,8 @@ def alllist():
 
 @app.route("/change")
 def change():
-  id = chatbot.new_conversation()
-  chatbot.change_conversation(id)
+  # id = chatbot.new_conversation()
+  # chatbot.change_conversation(id)
   num = request.args.get("num")
   chatbot.switch_llm(int(num)-1)
   return "切换成功"
