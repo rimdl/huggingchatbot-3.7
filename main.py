@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask,request,render_template
 from hugchat import hugchat
 from hugchat.login import Login
@@ -69,7 +71,7 @@ def chat():
   message = request.args.get("message")
   query_result = chatbot.query(message)
   print(chatbot.active_model)
-  return str(query_result)
+  return json.dumps(query_result)
 
 @app.route('/chatstream')
 def chatstream():
