@@ -70,7 +70,6 @@ def refresh():
 def chat():
   message = request.args.get("message")
   query_result = chatbot.query(message)
-  print(chatbot.active_model)
   return json.dumps(query_result)
 
 @app.route('/chatstream')
